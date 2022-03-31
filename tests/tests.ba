@@ -1,0 +1,6 @@
+  10 ! First of a chain of simple OMSI BASIC tests.
+  20 PRINT "Run tests (Y/N)";
+  30 INPUT A$
+  40 IF ASCII(A$) = ASCII("Y") THEN CHAIN "TEST00"
+  50 END
+

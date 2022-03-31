@@ -1,0 +1,137 @@
+OMSI BASIC DOCUMENTATION
+
+The original documentation for OMSI#BASIC has been lost.  This is
+a short introduction that covers the primary features of this
+implementation of BASIC.  It assumes that anyone running PDP-8
+software nowadays is an experienced programmer and probably somewhat
+familiar with BASIC.  More can be learned by reading the test programs
+and examples.
+
+EDITOR
+
+Any line that begins with a number is assumed to be a line of BASIC
+code. The editor does no error checking other than to make certain that
+the line number lies within the range 1 through 4094.
+
+The default file extension for source programs is .BA, for compiled
+programs .BC.
+
+If you run OMSI#BASIC from the system device, you can store and
+retrieve programs from devices that require two-page handlers.  If not,
+only one-page device handlers are allowed.
+
+Most commands can be shortened to two characters.  REPLACE, RESEQUENCE, and
+RENAME require three characters to differentiate them.
+
+SAVING AND RESTORING PROGRAM CONTENT:
+
+By default, the editor saves text buffer with line numbers, and expects them to
+be present when a file is read back in.  Various command allow for
+saving text without line numbers, and to automatically assign line numbers
+when read back in.  These commands allow the editor to be used with files
+that don't contain BASIC programs, for instance data files.  
+
+NEW [[dev:]filename]
+Deletes the text buffer from the text buffer, and renames the working file
+to filename, if given.  NONE is the default filename.
+
+RENAME [dev:]filename
+Renames the working file to filename.
+
+[N]LIST[NH]
+Lists the text buffer.  If NH is present, the header is not printed. NLIST
+lists the text without line numbers.
+
+[N]SAVE
+Writes the text buffer to the file specified in the last NEW, OLD, or RENAME
+command. An error is given if the file already exists, as will be true if the
+text buffer has been loaded by the OLD command.  NSAVE saves the text without
+line numbers.  This can be useful for data files.  Line numbers will be 
+assigned when the file is read in, then after editing the file can be
+written with NREPLACE.
+
+[N]REPLACE
+Writes the text buffer to the file specified in the last NEW, OLD,
+or RENAME command. NREPLACE saves the text without line numbers.
+
+[N]PUNCH[NH]
+Punches out the text buffer on the high speed punch, if present.  If this
+times out due to it not being present or turned on, it defaults to
+the terminal.  If NH is not present, the leader will include the
+file name punched in human-readable form. NPUNCH will punch the
+program without line numbers.
+
+OLD [dev:]filename [initial[,interval]].
+Overwrites the text buffer with the contents of the given file. If
+the line number arguments are present, assumes that it was saved without
+line numbers and will number the text appropriately.
+
+OVERLAY [dev:]filename [initial[,interval]]
+Adds the contents of the given file to the text buffer.  Will
+number if the initial line number is given.
+
+TAPE [initial[,interval]
+Read text from the high speed reader, if present, or the TTY paper tape
+reader, if not.  Optionally adds line numbers.
+
+EDITING COMMANDS:
+
+SCRATCH
+Empties the text buffer.
+
+EDIT linenumber
+Opens the given line for editing.  Type a character, and the editor will
+print the line up to and including the first instance of that character.
+You can then truncate the line at that point by typing return, delete
+characters with the delete key, or add additional text.  CTRL-L advances to the
+next instance of the character. CTRL-G allows you to enter a new character
+and advances to the first instance. If you type a letter that doesn't appear
+in the line, the editor will type out the rest of the line and exit edit
+mode. Typing two CTRL-G characters is a handy way to do this because
+CTRL-G can't appear in program text.
+
+SEARCH [first[,last] /search string/[replacement string/[L]]
+Search and optionally replace all occurances of a string in the given
+line number range.  The default is to operate on the entire program.
+The "/" character can be replaced by another character allowing for
+them to be part of the  search and replacement strings.
+
+If no replacement string is given, lines containing the search
+string are printed out.
+
+If a replacement string is given, all occurances of the search
+string are replaced, but not listed by defalt. CTRL-L at the end of the
+command string will list the modified lines.
+
+RESEQUENCE [initial[,interval]]
+Changes line numbers for the program to start at the initial value with 
+the given interval applied to each successive line.  Lines referenced by
+the program are retargeted to the new line numbers.
+
+The default is to resequence with an initial line number of 100 and an
+interval of 10.
+
+COMPILING AND RUNNING PROGRAMS
+
+RUN[NH]
+Runs the current program residing in the text buffer.  If NH is present, the header
+is not printed.
+
+COMPILE
+Compiles the current program and saves it using the current file name with
+the extension .BC.
+
+EXECUTE [dev:]filename[,line number]
+Execute the program stored with the given file name.  First a
+file with the extension ".BC" is looked for, and if found, is
+assumed to be a program previously compiled with the COMPILE
+command. The runtime performs sanity checking to verify that
+it is a compiled OMSI#BASIC program. If a compiled version
+is not found it will look for a source file with the extension
+.BA.
+
+If no line number is given, the program will be run starting at
+the lowest-numbered line.
+
+The EXECUTE command will restore the editor's text
+when it returns to the editor.

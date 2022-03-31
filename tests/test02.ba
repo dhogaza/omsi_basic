@@ -1,0 +1,23 @@
+ 100 ! Same as test01 but for virtual numeric arrays
+ 110 OPEN "TEST02" AS FILE 1
+ 120 DIM #1, A(10,2)
+ 130 FOR I = 0 TO 10 STEP 2
+ 140   FOR J = 1 TO 2
+ 150    A(I,J) = I*10 + J
+ 160  NEXT J
+ 170 NEXT I
+ 180 CLOSE 1
+ 190 OPEN "TEST02" AS FILE 2
+ 200 DIM #2,B(10,2)
+ 210 FOR I = 0 TO 10 STEP 2
+ 220   FOR J = 1 TO 2
+ 230    B = INT(B(I,J)/10)
+ 240    IF B <> I THEN PRINT USING "FAIL: I=### J=### INT(B(I,J)/10)=###",I,J,B:STOP
+ 250  NEXT J
+ 260 NEXT I
+ 270 CLOSE 2
+ 280 KILL "TEST02.BR"
+ 290 PRINT "TEST02 successful.  Continue (Y/N)?"; : INPUT A$
+ 300 IF ASCII(A$) = ASCII("Y") THEN CHAIN "TEST03"
+ 310 END
+
